@@ -1,0 +1,61 @@
+trigger: none  # Manual trigger. Pipeline will not run automatically.
+
+stages:
+- stage: ApplyBudgets
+  displayName: "Terraform Budget Automation"
+  jobs:
+  - job: Terraform
+    displayName: "Run Terraform"
+    pool:
+      vmImage: 'ubuntu-latest'  # Use Microsoft-hosted Ubuntu agent
+
+    steps:
+    # Checkout the repository so pipeline has access to all Terraform files
+    - checkout: self
+
+    # Install Terraform CLI on the agent
+    - task: charleszipp.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-installer.TerraformInstaller@1
+      displayName: 'Install Terraform'
+      inputs:
+        terraformVersion: '1.8.5'  # Set the exact version to ensure consistency
+
+    # Verify Terraform installation (optional, useful for debugging)
+    - script: |
+        echo "which terraform:" && which terraform || true
+        echo "terraform version:" && terraform -version
+      displayName: 'Verify Terraform is installed'
+
+    # Terraform Init with Azure backend
+    - task: TerraformCLI@1
+      displayName: 'Terraform Init'
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        workingDirectory: '$(System.DefaultWorkingDirectory)'   # change if your .tf is in a subfolder
+        backendType: 'azurerm'
+        ensureBackend: false
+        backendServiceArm: 'xxxx'  # Azure service connection for backend
+        backendAzureRmResourceGroupName: 'rg-xx'  # Resource group containing the storage account
+        backendAzureRmStorageAccountName: 'xxxx'  # Storage account for Terraform state
+        backendAzureRmContainerName: 'tfstate-budget'  # Container for the state files
+        backendAzureRmKey: 'terraform.tfstate'  # File name of the state in the container
+
+    # Terraform Plan step
+    - task: TerraformCLI@1
+      displayName: 'Terraform Plan'
+      inputs:
+        provider: 'azurerm'
+        command: 'plan'
+        workingDirectory: '$(System.DefaultWorkingDirectory)'
+        environmentServiceName: 'xxxxxx'  # Azure service connection for execution
+        additionalArgs: '-out=tfplan'  # Output plan file
+
+    # Terraform Apply step
+    - task: TerraformCLI@1
+      displayName: 'Terraform Apply'
+      inputs:
+        provider: 'azurerm'
+        command: 'apply'
+        workingDirectory: '$(System.DefaultWorkingDirectory)'
+        environmentServiceName: 'xxxxxx'  # Azure service connection for execution
+        additionalArgs: '-auto-approve tfplan'  # Automatically apply the plan without confirmation
