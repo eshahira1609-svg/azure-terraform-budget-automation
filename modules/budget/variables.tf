@@ -32,3 +32,5 @@ variable "contact_emails" {
   type        = list(string)
   description = "Email addresses for budget notifications"
 }
+
+#“Values for these variables are typically provided in terraform.tfvars or overridden in the root module when calling this module.”
