@@ -1,45 +1,48 @@
-resource "azurerm_consumption_budget_subscription" "monthly-budget-cloud-team-test-email"{
-    name = "monthly-budget-cloud-team-test-email"
-    subscription_id = var.subscription_id
+# Azure Budget for a specific subscription
+# This module creates a monthly budget with notifications.
 
-    amount = 500
-        time_grain = "Monthly"
+resource "azurerm_consumption_budget_subscription" "monthly_budget" {
+  # Budget name – must be unique per subscription
+  name            = var.budget_name
+  
+  # Subscription ID where this budget will apply
+  subscription_id = var.subscription_id
+  
+  # Monthly budget amount (currency depends on your Azure subscription)
+  amount          = var.amount
+  
+  # Budget is tracked on a monthly basis
+  # Options: "Monthly", "Quarterly", "Annually"
+  time_grain      = "Monthly"
 
-    time_period {
-        start_date = "2026-01-01T00:00:00Z"
-        end_date   = "2026-12-01T00:00:00Z"
-    }
+  # Budget time period
+  time_period {
+    # Start date for budget tracking
+    start_date = var.start_date
+    # Optional: add end_date if you want a specific end date
+    # end_date   = "YYYY-MM-DDT00:00:00Z"
+  }
 
-    
-lifecycle {
+  # Prevent accidental destruction of the budget
+  lifecycle {
     prevent_destroy = true
   }
 
-
-    notification {
-        enabled = true 
-        threshold = 80
-        operator = "GreaterThan"
-        threshold_type = "Actual"
-
-        contact_emails = [
-            "EfashahiraIskandar@schott.org"
-        ]
-
-
-    }
-
-    notification{
-        enabled = true 
-        threshold = 5
-        operator = "GreaterThan"
-        threshold_type = "Forecasted"
-
-        contact_emails = [
-              "EfashahiraIskandar@schott.org"
-        ]
-
-    }
-
+  # Notification configuration
+  notification {
+    # Enable or disable this alert
+    enabled        = true
+    
+    # Trigger when actual spending exceeds threshold %
+    threshold      = 80
+    
+    # Comparison operator – GreaterThan, LessThan, EqualTo
+    operator       = "GreaterThan"
+    
+    # Threshold type – Actual or Forecasted
+    threshold_type = "Actual"
+    
+    # Emails that will receive the alert
+    contact_emails = var.contact_emails
+  }
 }
-
