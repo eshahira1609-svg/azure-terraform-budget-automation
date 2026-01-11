@@ -4,26 +4,16 @@ Automate Azure subscription budgets using Terraform and Azure DevOps. Scalable, 
 
 🚀 Project Overview
 
-Create budgets per subscription automaticallyDefine amount, start date, and notification recipients per subscription
+Create budgets per subscription automatically
+
+Define amount, start date, and notification recipients per subscription
+
 Protect budgets with prevent_destroy
+
 Integrate with Azure DevOps pipeline for manual or automated execution
 
 🗂Repository Structure
-terraform-azure-budget-automation/
-├── main.tf
-├── variables.tf
-├── providers.tf
-├── outputs.tf
-├── terraform.tfvars.example
-├── azure-pipelines.yml
-├── .gitignore
-├── README.md
-└── modules/
-    └── budget/
-        ├── budget.tf
-        └── variables.tf
-
-
+<img width="387" height="393" alt="image" src="https://github.com/user-attachments/assets/e04a587f-1fc4-4668-a9ce-cfa7f75ee1c8" />
 
 ## Prerequisites
 
