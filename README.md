@@ -4,8 +4,7 @@ Automate Azure subscription budgets using Terraform and Azure DevOps. Scalable, 
 
 🚀 Project Overview
 
-Create budgets per subscription automatically
-Define amount, start date, and notification recipients per subscription
+Create budgets per subscription automaticallyDefine amount, start date, and notification recipients per subscription
 Protect budgets with prevent_destroy
 Integrate with Azure DevOps pipeline for manual or automated execution
 
